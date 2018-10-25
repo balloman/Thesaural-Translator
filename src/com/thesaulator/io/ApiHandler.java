@@ -20,25 +20,15 @@ public class ApiHandler {
         Entry entry = new Entry();
         entry.setWord((String) jsonObject.get("word"));
         JSONObject meaning = ((JSONObject) jsonObject.get("meaning"));
-        final String[] primaryPartOfSpeech = new String[1];
-//        meaning.forEach((k, v) -> {
-//            if (k.equals("determiner")){
-//                primaryPartOfSpeech[0] = (String) k;
-//                return;
-//            }else {
-//                primaryPartOfSpeech[0] = (String) k;
-//            }
-//        });
-        if (meaning.containsKey("determiner") || meaning.containsKey("exclamation")) {
-            primaryPartOfSpeech[0] = null;
+        if (meaning.containsKey("determiner") || meaning.containsKey("exclamation") || meaning.containsKey("pronoun")) {
+            entry.setTranslatable(false);
+        } else {
+            entry.setTranslatable(true);
         }
-        String partOfSpeech = primaryPartOfSpeech[0];
-        JSONObject retrievedDefinition = (JSONObject) ((JSONArray) meaning.get(partOfSpeech)).get(0);
-        JSONArray synonyms = (JSONArray) meaning.get(partOfSpeech);
-        entry.setPartOfSpeech(primaryPartOfSpeech[0]);
+        JSONObject retrievedDefinition = (JSONObject) ((JSONArray) meaning.values().toArray()[0]).get(0);
         entry.setDefinition((String) retrievedDefinition.get("definition"));
         entry.setExample((String) retrievedDefinition.get("example"));
-        entry.setSynonyms(synonyms);
+        entry.setSynonyms((JSONArray) retrievedDefinition.get("synonyms"));
         return entry;
     }
 

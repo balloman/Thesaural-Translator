@@ -6,15 +6,18 @@ import java.util.ArrayList;
 
 public class Entry {
     private String word;
-    private PartOfSpeech partOfSpeech;
+    private boolean isTranslatable;
     private String definition;
     private String example;
     private ArrayList<String> synonyms;
 
-    public Entry(String word, PartOfSpeech partOfSpeech, String definition) {
+    public Entry(String word, boolean isTranslatable, String definition, String example,
+            ArrayList<String> synonyms) {
         this.word = word;
-        this.partOfSpeech = partOfSpeech;
+        this.isTranslatable = isTranslatable;
         this.definition = definition;
+        this.example = example;
+        this.synonyms = synonyms;
     }
 
     public Entry(){}
@@ -27,12 +30,12 @@ public class Entry {
         this.word = word;
     }
 
-    public PartOfSpeech getPartOfSpeech() {
-        return partOfSpeech;
+    public boolean isTranslatable() {
+        return isTranslatable;
     }
 
-    public void setPartOfSpeech(String partOfSpeech) {
-        this.partOfSpeech = PartOfSpeech.valueOf(partOfSpeech);
+    public void setTranslatable(boolean translatable) {
+        isTranslatable = translatable;
     }
 
     public String getDefinition() {
@@ -57,13 +60,5 @@ public class Entry {
 
     public void setSynonyms(ArrayList<String> synonyms) {
         this.synonyms = synonyms;
-    }
-
-    public enum PartOfSpeech {
-        pronoun,
-        noun,
-        verb,
-        determiner,
-        exclamation
     }
 }
