@@ -3,8 +3,6 @@
 package com.thesaulator.io;
 
 import com.thesaulator.models.Entry;
-import org.jetbrains.annotations.NotNull;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -16,26 +14,10 @@ import java.net.URL;
 
 public class ApiHandler {
 
-    private static Entry mapDefinition(@NotNull JSONObject jsonObject) {
-        Entry entry = new Entry();
-        entry.setWord((String) jsonObject.get("word"));
-        JSONObject meaning = ((JSONObject) jsonObject.get("meaning"));
-        if (meaning.containsKey("determiner") || meaning.containsKey("exclamation") || meaning.containsKey("pronoun")) {
-            entry.setTranslatable(false);
-        } else {
-            entry.setTranslatable(true);
-        }
-        JSONObject retrievedDefinition = (JSONObject) ((JSONArray) meaning.values().toArray()[0]).get(0);
-        entry.setDefinition((String) retrievedDefinition.get("definition"));
-        entry.setExample((String) retrievedDefinition.get("example"));
-        entry.setSynonyms((JSONArray) retrievedDefinition.get("synonyms"));
-        return entry;
-    }
-
     public static Entry lookup(String term){
         JSONParser parser = new JSONParser();
         String totalPage = "";
-        JSONObject jsonObject = null;
+        JSONObject jsonObject = new JSONObject();
         try {
             URL lookup = new URL("https://googledictionaryapi.eu-gb.mybluemix.net/?define=" + term);
             BufferedReader in = new BufferedReader(new InputStreamReader(lookup.openStream()));
@@ -46,10 +28,10 @@ public class ApiHandler {
             }
             in.close();
             jsonObject = (JSONObject) parser.parse(totalPage);
-            System.out.println(jsonObject);
+//            System.out.println(jsonObject);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-        return mapDefinition(jsonObject);
+        return Entry.StaticEntryBuilder(jsonObject);
     }
 }
