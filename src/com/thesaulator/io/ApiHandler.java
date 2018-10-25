@@ -3,6 +3,7 @@
 package com.thesaulator.io;
 
 import com.thesaulator.models.Entry;
+import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -12,38 +13,42 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ApiHandler {
 
-    private static Entry mapDefinition(JSONObject jsonObject){
+    private static Entry mapDefinition(@NotNull JSONObject jsonObject) {
         Entry entry = new Entry();
         entry.setWord((String) jsonObject.get("word"));
         JSONObject meaning = ((JSONObject) jsonObject.get("meaning"));
         final String[] primaryPartOfSpeech = new String[1];
-        meaning.forEach((k, v) -> {
-            primaryPartOfSpeech[0] = (String) k;
-        });
+//        meaning.forEach((k, v) -> {
+//            if (k.equals("determiner")){
+//                primaryPartOfSpeech[0] = (String) k;
+//                return;
+//            }else {
+//                primaryPartOfSpeech[0] = (String) k;
+//            }
+//        });
+        if (meaning.containsKey("determiner") || meaning.containsKey("exclamation")) {
+            primaryPartOfSpeech[0] = null;
+        }
         String partOfSpeech = primaryPartOfSpeech[0];
         JSONObject retrievedDefinition = (JSONObject) ((JSONArray) meaning.get(partOfSpeech)).get(0);
         JSONArray synonyms = (JSONArray) meaning.get(partOfSpeech);
         entry.setPartOfSpeech(primaryPartOfSpeech[0]);
         entry.setDefinition((String) retrievedDefinition.get("definition"));
         entry.setExample((String) retrievedDefinition.get("example"));
-        entry.setSynonyms((String[]) synonyms.toArray(new String[0]));
+        entry.setSynonyms(synonyms);
         return entry;
     }
 
     public static Entry lookup(String term){
         JSONParser parser = new JSONParser();
-        URL lookup = null;
-        BufferedReader in = null;
         String totalPage = "";
         JSONObject jsonObject = null;
         try {
-            lookup = new URL("https://googledictionaryapi.eu-gb.mybluemix.net/?define=" + term);
-            in = new BufferedReader(new InputStreamReader(lookup.openStream()));
+            URL lookup = new URL("https://googledictionaryapi.eu-gb.mybluemix.net/?define=" + term);
+            BufferedReader in = new BufferedReader(new InputStreamReader(lookup.openStream()));
             String inputLine;
             while ((inputLine = in.readLine()) != null){
                 //System.out.println(inputLine);

@@ -2,12 +2,14 @@
 
 package com.thesaulator.models;
 
+import java.util.ArrayList;
+
 public class Entry {
     private String word;
     private PartOfSpeech partOfSpeech;
     private String definition;
     private String example;
-    private String[] synonyms;
+    private ArrayList<String> synonyms;
 
     public Entry(String word, PartOfSpeech partOfSpeech, String definition) {
         this.word = word;
@@ -49,11 +51,11 @@ public class Entry {
         this.example = example;
     }
 
-    public String[] getSynonyms() {
+    public ArrayList<String> getSynonyms() {
         return synonyms;
     }
 
-    public void setSynonyms(String[] synonyms) {
+    public void setSynonyms(ArrayList<String> synonyms) {
         this.synonyms = synonyms;
     }
 

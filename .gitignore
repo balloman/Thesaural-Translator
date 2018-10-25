@@ -30,6 +30,7 @@ gradle-app.setting
 # Package Files #
 *.jar
 !/libs/*.jar
+!/lib/*.jar
 *.war
 *.nar
 *.ear
