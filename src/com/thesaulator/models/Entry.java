@@ -28,36 +28,27 @@ public class Entry {
 
     public static Entry StaticEntryBuilder(@NotNull JSONObject jsonObject) {
         Entry entry = new Entry();
-        entry.setWord((String) jsonObject.get("word"));
-        JSONObject meaning = ((JSONObject) jsonObject.get("meaning"));
-        if (meaning.containsKey("determiner") || meaning.containsKey("exclamation") || meaning.containsKey("pronoun")
-                || meaning.containsKey("conjunction")) {
-            entry.setTranslatable(false);
-        } else {
-            entry.setTranslatable(true);
-        }
-        JSONObject retrievedDefinition = (JSONObject) ((JSONArray) meaning.values().toArray()[0]).get(0);
-        entry.setDefinition((String) retrievedDefinition.get("definition"));
-        entry.setExample((String) retrievedDefinition.get("example"));
-        entry.setSynonyms((JSONArray) retrievedDefinition.get("synonyms"));
-        if (entry.getSynonyms() == null) {
-            entry.setTranslatable(false);
-        }
+        entry.entryBuilder(jsonObject);
         return entry;
     }
 
     public void entryBuilder(@NotNull JSONObject jsonObject) {
         this.setWord((String) jsonObject.get("word"));
         JSONObject meaning = ((JSONObject) jsonObject.get("meaning"));
-        if (meaning.containsKey("determiner") || meaning.containsKey("exclamation") || meaning.containsKey("pronoun")) {
+        if (meaning.containsKey("determiner") || meaning.containsKey("exclamation") || meaning.containsKey("pronoun")
+                || meaning.containsKey("conjunction")) {
             this.setTranslatable(false);
         } else {
             this.setTranslatable(true);
         }
-        JSONObject retrievedDefinition = (JSONObject) ((JSONArray) meaning.values().toArray()[0]).get(0);
+        JSONObject retrievedDefinition = (JSONObject) ((JSONArray)
+                meaning.values().toArray()[0]).get(0);
         this.setDefinition((String) retrievedDefinition.get("definition"));
         this.setExample((String) retrievedDefinition.get("example"));
         this.setSynonyms((JSONArray) retrievedDefinition.get("synonyms"));
+        if (this.getSynonyms() == null) {
+            this.setTranslatable(false);
+        }
     }
 
     public String getWord() {
