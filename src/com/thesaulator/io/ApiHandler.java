@@ -34,4 +34,25 @@ public class ApiHandler {
         }
         return Entry.StaticEntryBuilder(jsonObject);
     }
+
+    public static Entry gLookup(String term) {
+        JSONParser parser = new JSONParser();
+        String totalPage = "";
+        JSONObject jsonObject = new JSONObject();
+        try {
+            URL lookup = new URL("https://googledictionaryapi.eu-gb.mybluemix.net/?define=" + term);
+            BufferedReader in = new BufferedReader(new InputStreamReader(lookup.openStream()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                //System.out.println(inputLine);
+                totalPage = totalPage.concat(inputLine);
+            }
+            in.close();
+            jsonObject = (JSONObject) parser.parse(totalPage);
+//            System.out.println(jsonObject);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        return Entry.StaticEntryBuilder(jsonObject);
+    }
 }
