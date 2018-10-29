@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.thesaulator.models.Entry;
+import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -19,6 +20,7 @@ import java.util.List;
 
 public class ApiHandler {
 
+    @Deprecated
     public static Entry lookup(String term){
         JSONParser parser = new JSONParser();
         String totalPage = "";
@@ -49,22 +51,20 @@ public class ApiHandler {
             BufferedReader in = new BufferedReader(new InputStreamReader(lookup.openStream()));
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
-                //System.out.println(inputLine);
                 totalPage = totalPage.concat(inputLine);
             }
             in.close();
             jsonElement = parser.parse(totalPage);
-//            System.out.println(jsonObject);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return Entry.StaticEntryBuilder(jsonElement);
     }
 
-    public static <T> List<T> jsonArrayToList(JsonArray jsonArray) {
-        List<T> newList = new ArrayList<>();
+    public static List<String> jsonStringArrayToList(@NotNull JsonArray jsonArray) {
+        List<String> newList = new ArrayList<>();
         for (int i = 0; i < jsonArray.size(); i++) {
-            newList.add((T) jsonArray.get(i));
+            newList.add(jsonArray.get(i).getAsString());
         }
         return newList;
     }

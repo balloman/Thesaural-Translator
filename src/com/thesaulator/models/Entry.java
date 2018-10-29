@@ -38,6 +38,7 @@ public class Entry {
 
     public Entry(){}
 
+    @Deprecated
     public static Entry StaticEntryBuilder(@NotNull JSONObject jsonObject) {
         Entry entry = new Entry();
         entry.entryBuilder(jsonObject);
@@ -50,6 +51,7 @@ public class Entry {
         return entry;
     }
 
+    @Deprecated
     private void entryBuilder(@NotNull JSONObject jsonObject) {
         this.setWord((String) jsonObject.get("word"));
         JSONObject meaning = ((JSONObject) jsonObject.get("meaning"));
@@ -80,7 +82,7 @@ public class Entry {
         if (retrievedDefinition.get("example") != null)
             this.setExample(retrievedDefinition.get("example").getAsString());
         if (retrievedDefinition.get("synonyms") != null) {
-            this.setSynonyms(ApiHandler.jsonArrayToList(retrievedDefinition.get("synonyms").getAsJsonArray()));
+            this.setSynonyms(ApiHandler.jsonStringArrayToList(retrievedDefinition.get("synonyms").getAsJsonArray()));
         } else {
             this.setTranslatable(false);
         }

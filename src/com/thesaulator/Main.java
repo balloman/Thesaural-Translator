@@ -13,12 +13,11 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Entry entry = ApiHandler.gLookup("dog");
-//        WordParseResult result = parseWords();
-//        Map<Integer, String> stringMap = result.parsed;
-//        Map<Integer, String> originalMap = result.original;
-//        Map<Integer, Entry> entryMap = produceEntriesWithKeys(stringMap);
-//        System.out.println(sentence(originalMap, entryMap));
+        WordParseResult result = parseWords();
+        Map<Integer, String> stringMap = result.parsed;
+        Map<Integer, String> originalMap = result.original;
+        Map<Integer, Entry> entryMap = produceEntriesWithKeys(stringMap);
+        System.out.println(sentence(originalMap, entryMap));
     }
 
     @NotNull
@@ -71,7 +70,7 @@ public class Main {
                 }
             }
         }
-        List<String> words = new ArrayList(originalMap.values());
+        List<String> words = new ArrayList<>(originalMap.values());
         for (String s : words) {
             sentence = sentence.concat(s);
         }
@@ -79,7 +78,7 @@ public class Main {
     }
 
     private static Entry produceEntry(String word) {
-        return ApiHandler.lookup(word);
+        return ApiHandler.gLookup(word);
     }
 
     final private static class WordParseResult {
