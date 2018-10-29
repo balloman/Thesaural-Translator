@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class ApiHandler {
 
@@ -30,12 +31,10 @@ public class ApiHandler {
             BufferedReader in = new BufferedReader(new InputStreamReader(lookup.openStream()));
             String inputLine;
             while ((inputLine = in.readLine()) != null){
-                //System.out.println(inputLine);
                 totalPage = totalPage.concat(inputLine);
             }
             in.close();
             jsonObject = (JSONObject) parser.parse(totalPage);
-//            System.out.println(jsonObject);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
@@ -56,7 +55,9 @@ public class ApiHandler {
             in.close();
             jsonElement = parser.parse(totalPage);
         } catch (IOException e) {
-            e.printStackTrace();
+            Entry entry = new Entry();
+            entry.setTranslatable(false);
+            return entry;
         }
         return Entry.StaticEntryBuilder(jsonElement);
     }
@@ -67,5 +68,18 @@ public class ApiHandler {
             newList.add(jsonArray.get(i).getAsString());
         }
         return newList;
+    }
+
+    public static class LookupCallable implements Callable<Entry> {
+        private String term;
+
+        public LookupCallable(String term) {
+            this.term = term;
+        }
+
+        @Override
+        public Entry call() {
+            return gLookup(term);
+        }
     }
 }

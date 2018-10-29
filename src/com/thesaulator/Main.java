@@ -8,6 +8,10 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 public class Main {
 
@@ -16,7 +20,7 @@ public class Main {
         WordParseResult result = parseWords();
         Map<Integer, String> stringMap = result.parsed;
         Map<Integer, String> originalMap = result.original;
-        Map<Integer, Entry> entryMap = produceEntriesWithKeys(stringMap);
+        Map<Integer, Entry> entryMap = aProduceEntriesWithKeys(stringMap);
         System.out.println(sentence(originalMap, entryMap));
     }
 
@@ -48,15 +52,53 @@ public class Main {
     private static List<Entry> produceEntries(@NotNull List<String> words) {
         List<Entry> entries = new ArrayList<>();
         for (String word : words) {
-            entries.add(produceEntry(word));
+            entries.add(ApiHandler.gLookup(word));
         }
         return entries;
     }
 
+    @Deprecated
     private static Map<Integer, Entry> produceEntriesWithKeys(@NotNull Map<Integer, String> words) {
         Map<Integer, Entry> entries = new HashMap<>();
         for (Integer key : words.keySet()) {
-            entries.put(key, produceEntry(words.get(key)));
+            entries.put(key, ApiHandler.gLookup(words.get(key)));
+        }
+        return entries;
+    }
+
+    private static Map<Integer, Entry> aProduceEntriesWithKeys(@NotNull Map<Integer, String> words) {
+        Map<Integer, Entry> entries = new HashMap<>();
+        Map<Integer, FutureTask<Entry>> futureTasks = new HashMap<>();
+        for (Integer key : words.keySet()) {
+            ApiHandler.LookupCallable callable = new ApiHandler.LookupCallable(words.get(key));
+            futureTasks.put(key, new FutureTask<>(callable));
+        }
+        ExecutorService executorService = Executors.newFixedThreadPool(futureTasks.size());
+        for (Integer key : futureTasks.keySet()) {
+            executorService.execute(futureTasks.get(key));
+        }
+        while (true) {
+            try {
+                boolean complete = false;
+                for (Integer key : futureTasks.keySet()) {
+                    if (futureTasks.get(key).isDone()) {
+                        complete = true;
+                    } else {
+                        complete = false;
+                        break;
+                    }
+                }
+                if (complete) {
+                    for (Integer key : futureTasks.keySet()) {
+                        entries.put(key, futureTasks.get(key).get());
+                    }
+                    break;
+                } else {
+                    System.out.print(".");
+                    Thread.sleep(750);
+                }
+            } catch (InterruptedException | ExecutionException ignored) {
+            }
         }
         return entries;
     }
@@ -75,10 +117,6 @@ public class Main {
             sentence = sentence.concat(s);
         }
         return sentence;
-    }
-
-    private static Entry produceEntry(String word) {
-        return ApiHandler.gLookup(word);
     }
 
     final private static class WordParseResult {
