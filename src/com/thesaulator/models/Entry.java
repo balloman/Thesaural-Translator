@@ -2,7 +2,6 @@
 
 package com.thesaulator.models;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +9,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class Entry {
     private String word;
@@ -26,6 +27,12 @@ public class Entry {
         this.example = example;
         this.synonyms = synonyms;
     }
+
+    private static final Collection<String> PROHIBITED = Arrays.asList(
+            "determiner",
+            "exclamation",
+            "pronoun",
+            "conjunction");
 
     public Entry(){}
 
@@ -62,9 +69,13 @@ public class Entry {
 
     private void entryBuilder(@NotNull JsonElement jsonElement) {
         JsonObject object = (JsonObject) jsonElement;
+        this.setWord(object.get("word").getAsString());
         JsonObject definitions = object.get("meaning").getAsJsonObject();
-        JsonArray retrievedPartOfSpeech = definitions.getAsJsonArray((String) definitions.keySet().toArray()[0]);
-        JsonObject retrievedDefinition = retrievedPartOfSpeech.get(0).getAsJsonObject();
+        JsonObject retrievedDefinition = definitions
+                .getAsJsonArray((String) definitions.keySet().toArray()[0]).get(0).getAsJsonObject();
+        if (definitions.keySet().containsAll(PROHIBITED)) {
+
+        }
     }
 
     public String getWord() {
