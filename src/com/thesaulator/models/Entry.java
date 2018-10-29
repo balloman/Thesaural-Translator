@@ -2,7 +2,6 @@
 
 package com.thesaulator.models;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +9,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class Entry {
     private String word;
@@ -26,6 +27,12 @@ public class Entry {
         this.example = example;
         this.synonyms = synonyms;
     }
+
+    private static final Collection<String> PROHIBITED = Arrays.asList(
+            "determiner",
+            "exclamation",
+            "pronoun",
+            "conjunction");
 
     public Entry(){}
 
@@ -62,9 +69,14 @@ public class Entry {
 
     private void entryBuilder(@NotNull JsonElement jsonElement) {
         JsonObject object = (JsonObject) jsonElement;
+        this.setWord(object.get("word").getAsString());
         JsonObject definitions = object.get("meaning").getAsJsonObject();
-        JsonArray retrievedPartOfSpeech = definitions.getAsJsonArray((String) definitions.keySet().toArray()[0]);
-        JsonObject retrievedDefinition = retrievedPartOfSpeech.get(0).getAsJsonObject();
+        JsonObject retrievedDefinition = definitions
+                .getAsJsonArray((String) definitions.keySet().toArray()[0]).get(0).getAsJsonObject();
+        this.setTranslatable(!definitions.keySet().containsAll(PROHIBITED));
+        this.setDefinition(retrievedDefinition.get("definition").getAsString());
+        this.setExample(retrievedDefinition.get("example").getAsString());
+        this.setSynonyms(retrievedDefinition.get("synonyms").getAsJsonArray());
     }
 
     public String getWord() {
@@ -106,4 +118,6 @@ public class Entry {
     public void setSynonyms(ArrayList<String> synonyms) {
         this.synonyms = synonyms;
     }
+
+    public void setSynonyms()
 }
