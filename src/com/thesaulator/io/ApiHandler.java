@@ -18,6 +18,12 @@ import java.util.concurrent.Callable;
 
 public class ApiHandler {
 
+    /**
+     * Looks up the provided search term
+     *
+     * @param term The term to search
+     * @return An entry object corresponding to the result of the search;
+     */
     private static Entry gLookup(String term) {
         JsonParser parser = new JsonParser();
         String totalPage = "";
@@ -39,6 +45,11 @@ public class ApiHandler {
         return Entry.StaticEntryBuilder(jsonElement);
     }
 
+    /**
+     * Converts a json string array to a string list
+     * @param jsonArray The array to convert
+     * @return The list of Strings
+     */
     public static List<String> jsonStringArrayToList(@NotNull JsonArray jsonArray) {
         List<String> newList = new ArrayList<>();
         for (int i = 0; i < jsonArray.size(); i++) {
@@ -47,6 +58,9 @@ public class ApiHandler {
         return newList;
     }
 
+    /**
+     * An inner class that handles asynchronous calls to lookup a word
+     */
     public static class LookupCallable implements Callable<Entry> {
         private String term;
 
