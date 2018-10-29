@@ -19,6 +19,22 @@ public class Entry {
     private String example;
     private List<String> synonyms;
 
+    // basically the not allowed parts of speech, so if a word has any of these parts of speech, it won't translate it
+    private static final Collection<String> PROHIBITED = Arrays.asList(
+            "determiner",
+            "exclamation",
+            "pronoun",
+            "conjunction");
+
+    /**
+     * Constructor thats never used, idk why this is here, but don't use it, pls use the builder
+     *
+     * @param word           Entry word
+     * @param isTranslatable is it translatable
+     * @param definition     the definition of the word
+     * @param example        examples of the word
+     * @param synonyms       a list of synonyms for this word
+     */
     public Entry(String word, boolean isTranslatable, String definition, String example,
             ArrayList<String> synonyms) {
         this.word = word;
@@ -28,20 +44,24 @@ public class Entry {
         this.synonyms = synonyms;
     }
 
-    private static final Collection<String> PROHIBITED = Arrays.asList(
-            "determiner",
-            "exclamation",
-            "pronoun",
-            "conjunction");
+    public Entry() {
+    }
 
-    public Entry(){}
-
+    /**
+     * Builds a new Entry for you
+     * @param jsonElement The json page to use
+     * @return An Entry object for the passed in jsonElement
+     */
     public static Entry StaticEntryBuilder(@NotNull JsonElement jsonElement) {
         Entry entry = new Entry();
         entry.entryBuilder(jsonElement);
         return entry;
     }
 
+    /**
+     * Maps the json element objects to the objects fields
+     * @param jsonElement The json elemtent to map with
+     */
     private void entryBuilder(@NotNull JsonElement jsonElement) {
         JsonObject object = (JsonObject) jsonElement;
         this.setWord(object.get("word").getAsString());
