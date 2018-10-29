@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ApiHandler {
 
@@ -60,8 +61,11 @@ public class ApiHandler {
         return Entry.StaticEntryBuilder(jsonElement);
     }
 
-    public static <T> ArrayList<T> jsonArrayToList(JsonArray jsonArray) {
-        int i = 0;
-        for ()
+    public static <T> List<T> jsonArrayToList(JsonArray jsonArray) {
+        List<T> newList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            newList.add((T) jsonArray.get(i));
+        }
+        return newList;
     }
 }

@@ -4,6 +4,7 @@ package com.thesaulator.models;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thesaulator.io.ApiHandler;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -11,13 +12,14 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class Entry {
     private String word;
     private boolean isTranslatable;
     private String definition;
     private String example;
-    private ArrayList<String> synonyms;
+    private List<String> synonyms;
 
     public Entry(String word, boolean isTranslatable, String definition, String example,
             ArrayList<String> synonyms) {
@@ -75,8 +77,13 @@ public class Entry {
                 .getAsJsonArray((String) definitions.keySet().toArray()[0]).get(0).getAsJsonObject();
         this.setTranslatable(!definitions.keySet().containsAll(PROHIBITED));
         this.setDefinition(retrievedDefinition.get("definition").getAsString());
-        this.setExample(retrievedDefinition.get("example").getAsString());
-        this.setSynonyms(retrievedDefinition.get("synonyms").getAsJsonArray());
+        if (retrievedDefinition.get("example") != null)
+            this.setExample(retrievedDefinition.get("example").getAsString());
+        if (retrievedDefinition.get("synonyms") != null) {
+            this.setSynonyms(ApiHandler.jsonArrayToList(retrievedDefinition.get("synonyms").getAsJsonArray()));
+        } else {
+            this.setTranslatable(false);
+        }
     }
 
     public String getWord() {
@@ -111,13 +118,11 @@ public class Entry {
         this.example = example;
     }
 
-    public ArrayList<String> getSynonyms() {
+    public List<String> getSynonyms() {
         return synonyms;
     }
 
-    public void setSynonyms(ArrayList<String> synonyms) {
+    public void setSynonyms(List<String> synonyms) {
         this.synonyms = synonyms;
     }
-
-    public void setSynonyms()
 }
