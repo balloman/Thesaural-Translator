@@ -7,9 +7,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.thesaulator.models.Entry;
 import org.jetbrains.annotations.NotNull;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,27 +18,7 @@ import java.util.concurrent.Callable;
 
 public class ApiHandler {
 
-    @Deprecated
-    public static Entry lookup(String term){
-        JSONParser parser = new JSONParser();
-        String totalPage = "";
-        JSONObject jsonObject = new JSONObject();
-        try {
-            URL lookup = new URL("https://googledictionaryapi.eu-gb.mybluemix.net/?define=" + term);
-            BufferedReader in = new BufferedReader(new InputStreamReader(lookup.openStream()));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null){
-                totalPage = totalPage.concat(inputLine);
-            }
-            in.close();
-            jsonObject = (JSONObject) parser.parse(totalPage);
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-        return Entry.StaticEntryBuilder(jsonObject);
-    }
-
-    public static Entry gLookup(String term) {
+    private static Entry gLookup(String term) {
         JsonParser parser = new JsonParser();
         String totalPage = "";
         JsonElement jsonElement = null;

@@ -6,8 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thesaulator.io.ApiHandler;
 import org.jetbrains.annotations.NotNull;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,37 +36,10 @@ public class Entry {
 
     public Entry(){}
 
-    @Deprecated
-    public static Entry StaticEntryBuilder(@NotNull JSONObject jsonObject) {
-        Entry entry = new Entry();
-        entry.entryBuilder(jsonObject);
-        return entry;
-    }
-
     public static Entry StaticEntryBuilder(@NotNull JsonElement jsonElement) {
         Entry entry = new Entry();
         entry.entryBuilder(jsonElement);
         return entry;
-    }
-
-    @Deprecated
-    private void entryBuilder(@NotNull JSONObject jsonObject) {
-        this.setWord((String) jsonObject.get("word"));
-        JSONObject meaning = ((JSONObject) jsonObject.get("meaning"));
-        if (meaning.containsKey("determiner") || meaning.containsKey("exclamation") || meaning.containsKey("pronoun")
-                || meaning.containsKey("conjunction")) {
-            this.setTranslatable(false);
-        } else {
-            this.setTranslatable(true);
-        }
-        JSONObject retrievedDefinition = (JSONObject) ((JSONArray)
-                meaning.values().toArray()[0]).get(0);
-        this.setDefinition((String) retrievedDefinition.get("definition"));
-        this.setExample((String) retrievedDefinition.get("example"));
-        this.setSynonyms((JSONArray) retrievedDefinition.get("synonyms"));
-        if (this.getSynonyms() == null) {
-            this.setTranslatable(false);
-        }
     }
 
     private void entryBuilder(@NotNull JsonElement jsonElement) {

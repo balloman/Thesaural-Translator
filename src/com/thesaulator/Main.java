@@ -16,7 +16,6 @@ import java.util.concurrent.FutureTask;
 public class Main {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
         WordParseResult result = parseWords();
         Map<Integer, String> stringMap = result.parsed;
         Map<Integer, String> originalMap = result.original;
@@ -47,23 +46,6 @@ public class Main {
             if (!isSpecial) words.put(key, ss);
         }
         return new WordParseResult(integerStringMap, words);
-    }
-
-    private static List<Entry> produceEntries(@NotNull List<String> words) {
-        List<Entry> entries = new ArrayList<>();
-        for (String word : words) {
-            entries.add(ApiHandler.gLookup(word));
-        }
-        return entries;
-    }
-
-    @Deprecated
-    private static Map<Integer, Entry> produceEntriesWithKeys(@NotNull Map<Integer, String> words) {
-        Map<Integer, Entry> entries = new HashMap<>();
-        for (Integer key : words.keySet()) {
-            entries.put(key, ApiHandler.gLookup(words.get(key)));
-        }
-        return entries;
     }
 
     private static Map<Integer, Entry> aProduceEntriesWithKeys(@NotNull Map<Integer, String> words) {
@@ -100,6 +82,7 @@ public class Main {
             } catch (InterruptedException | ExecutionException ignored) {
             }
         }
+        System.out.println();
         return entries;
     }
 
