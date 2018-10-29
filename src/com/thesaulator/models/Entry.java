@@ -2,6 +2,9 @@
 
 package com.thesaulator.models;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -32,7 +35,13 @@ public class Entry {
         return entry;
     }
 
-    public void entryBuilder(@NotNull JSONObject jsonObject) {
+    public static Entry StaticEntryBuilder(@NotNull JsonElement jsonElement) {
+        Entry entry = new Entry();
+        entry.entryBuilder(jsonElement);
+        return entry;
+    }
+
+    private void entryBuilder(@NotNull JSONObject jsonObject) {
         this.setWord((String) jsonObject.get("word"));
         JSONObject meaning = ((JSONObject) jsonObject.get("meaning"));
         if (meaning.containsKey("determiner") || meaning.containsKey("exclamation") || meaning.containsKey("pronoun")
@@ -49,6 +58,13 @@ public class Entry {
         if (this.getSynonyms() == null) {
             this.setTranslatable(false);
         }
+    }
+
+    private void entryBuilder(@NotNull JsonElement jsonElement) {
+        JsonObject object = (JsonObject) jsonElement;
+        JsonObject definitions = object.get("meaning").getAsJsonObject();
+        JsonArray retrievedPartOfSpeech = definitions.getAsJsonArray((String) definitions.keySet().toArray()[0]);
+        JsonObject retrievedDefinition = retrievedPartOfSpeech.get(0).getAsJsonObject();
     }
 
     public String getWord() {

@@ -13,11 +13,12 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        WordParseResult result = parseWords();
-        Map<Integer, String> stringMap = result.parsed;
-        Map<Integer, String> originalMap = result.original;
-        Map<Integer, Entry> entryMap = produceEntriesWithKeys(stringMap);
-        System.out.println(sentence(originalMap, entryMap));
+        Entry entry = ApiHandler.gLookup("dog");
+//        WordParseResult result = parseWords();
+//        Map<Integer, String> stringMap = result.parsed;
+//        Map<Integer, String> originalMap = result.original;
+//        Map<Integer, Entry> entryMap = produceEntriesWithKeys(stringMap);
+//        System.out.println(sentence(originalMap, entryMap));
     }
 
     @NotNull

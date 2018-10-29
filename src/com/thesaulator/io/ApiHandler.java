@@ -2,6 +2,8 @@
 
 package com.thesaulator.io;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.thesaulator.models.Entry;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -36,9 +38,9 @@ public class ApiHandler {
     }
 
     public static Entry gLookup(String term) {
-        JSONParser parser = new JSONParser();
+        JsonParser parser = new JsonParser();
         String totalPage = "";
-        JSONObject jsonObject = new JSONObject();
+        JsonElement jsonElement = null;
         try {
             URL lookup = new URL("https://googledictionaryapi.eu-gb.mybluemix.net/?define=" + term);
             BufferedReader in = new BufferedReader(new InputStreamReader(lookup.openStream()));
@@ -48,11 +50,11 @@ public class ApiHandler {
                 totalPage = totalPage.concat(inputLine);
             }
             in.close();
-            jsonObject = (JSONObject) parser.parse(totalPage);
+            jsonElement = parser.parse(totalPage);
 //            System.out.println(jsonObject);
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return Entry.StaticEntryBuilder(jsonObject);
+        return Entry.StaticEntryBuilder(jsonElement);
     }
 }
