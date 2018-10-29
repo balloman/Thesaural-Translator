@@ -23,6 +23,13 @@ public class Main {
         System.out.println(sentence(originalMap, entryMap));
     }
 
+
+    /**
+     * Parses a sentence into individual words
+     *
+     * @return A WordParseResult that contains the original sentence and word positions,
+     * and the new sentence and word positions
+     */
     @NotNull
     @Contract(" -> new")
     private static WordParseResult parseWords() {
@@ -48,6 +55,11 @@ public class Main {
         return new WordParseResult(integerStringMap, words);
     }
 
+    /**
+     * Asynchronously looks up all the words in the collection
+     * @param words A map of the words with their positions
+     * @return A map of the entry objects and their positions
+     */
     private static Map<Integer, Entry> aProduceEntriesWithKeys(@NotNull Map<Integer, String> words) {
         Map<Integer, Entry> entries = new HashMap<>();
         Map<Integer, FutureTask<Entry>> futureTasks = new HashMap<>();
@@ -86,6 +98,12 @@ public class Main {
         return entries;
     }
 
+    /**
+     * Replaces valid old words with a synonym to produce the final sentence
+     * @param originalMap A map of the original words
+     * @param entryMap A map of the translatable words as entry objects
+     * @return A string of the final sentence
+     */
     private static String sentence(@NotNull Map<Integer, String> originalMap, Map<Integer, Entry> entryMap) {
         String sentence = "";
         for (Integer position : originalMap.keySet()) {
@@ -102,6 +120,10 @@ public class Main {
         return sentence;
     }
 
+    /**
+     * A wrapper class that essentially functions as a struct in that it just holds two maps, the original sentence, and
+     * the new one
+     */
     final private static class WordParseResult {
         private Map<Integer, String> original;
         private Map<Integer, String> parsed;
